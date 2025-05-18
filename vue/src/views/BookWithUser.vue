@@ -86,6 +86,15 @@
       >
       </el-pagination>
     </div>
+    <el-dialog title="请为本书评分" v-model="showRateDialog" width="30%">
+      <div style="text-align:center;">
+        <el-rate v-model="rateValue" :max="5" allow-half show-score />
+      </div>
+      <template #footer>
+        <el-button @click="showRateDialog = false">取消</el-button>
+        <el-button type="primary" @click="submitRate">提交评分</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -150,12 +159,34 @@ export default {
       }).then(res =>{
         if(res.code == 0 ){
           ElMessage.success("归还成功");
+          this.rateBookId = row.bookId;
+          this.rateUserId = row.userId;
+          this.rateValue = 0;
+          this.showRateDialog = true;
           this.load();
         }
         else {
           ElMessage.error(res.msg)
         }
       })
+    },
+    submitRate() {
+      if (!this.rateValue) {
+        ElMessage.warning("请先选择评分");
+        return;
+      }
+      request.post("/rating", {
+        userId: this.rateUserId,
+        bookId: this.rateBookId,
+        score: this.rateValue
+      }).then(res => {
+        if (res.code == 0) {
+          ElMessage.success("评分成功！");
+          this.showRateDialog = false;
+        } else {
+          ElMessage.error(res.msg || "评分失败");
+        }
+      });
     },
     handleSizeChange(pageSize){
       this.pageSize = pageSize
@@ -184,6 +215,10 @@ export default {
       tableData: [],
       user:{},
       forms:[],
+      showRateDialog: false,
+      rateValue: 0,
+      rateBookId: null,
+      rateUserId: null,
     }
   },
 }
