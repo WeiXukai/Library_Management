@@ -95,8 +95,8 @@ cd vue
 npm install
 npm run serve
 ```
-- 默认端口：8081
-- 访问 http://localhost:8081 进入系统
+- 默认端口：9999
+- 访问 http://localhost:9999 进入系统
 
 ### 4. 推荐功能使用
 - 登录系统后，进入"推荐"页面（Recommend.vue）。
